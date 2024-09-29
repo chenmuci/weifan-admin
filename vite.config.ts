@@ -16,11 +16,11 @@ export default defineConfig({
                 '@vueuse/core',
                 'pinia'
             ],
-            dts: 'types/auto-imports.d.ts',
+            dts: 'src/types/auto-imports.d.ts',
             dirs: ['src/stores', 'src/hooks'],
         }),
         Components({
-            dts: 'types/components.d.ts',
+            dts: 'src/types/components.d.ts',
             dirs: ['src/components']
         }),
         Unocss()
