@@ -23,6 +23,5 @@ export default defineConfig({
         ['flex-between', 'flex items-center justify-between'],
         ['flex-end', 'flex items-end justify-between']
     ],
-    transformers: [transformerDirectives(), transformerVariantGroup()],
-    rules: [[/^p-(\d+)$/, (match) => ({ padding: `${match[1]}px` })]]
+    transformers: [transformerDirectives(), transformerVariantGroup()]
 })

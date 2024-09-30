@@ -3,7 +3,7 @@
         <LayoutMenu />
         <a-layout>
             <LayoutHeader />
-            <a-layout-content class="m-4">
+            <a-layout-content class="p-4" :style="{ overflow: 'auto', height: 'calc(100vh - 86px)'}">
                 <RouterView />
             </a-layout-content>
             <LayoutFooter v-if="appConfig.footer" />
