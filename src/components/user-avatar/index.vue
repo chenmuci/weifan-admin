@@ -14,6 +14,14 @@
                         个人中心
                     </RouterLink>
                 </a-menu-item>
+                <a-menu-item key="1">
+                    <template #icon>
+                        <my-icon name="EditOutlined" />
+                    </template>
+                    <RouterLink to="/account/editPwd">
+                        修改密码
+                    </RouterLink>
+                </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item key="logout">
                     <template #icon>

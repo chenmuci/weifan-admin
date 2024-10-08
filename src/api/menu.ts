@@ -42,29 +42,6 @@ export default [
         ]
     },
     {
-        "title": "开发者工具",
-        "path": "/devtools",
-        "component": "layout/index",
-        "icon": "GlobalOutlined",
-        "locale": "route.devtools",
-        "children": [
-            {
-                "title": "表单生成",
-                "path": "/devtools/form",
-                "component": "views/devtools/form/index",
-                "icon": "FileTextOutlined",
-                "locale": "route.devtools.form"
-            },
-            {
-                "title": "代码生成",
-                "path": "/devtools/gen",
-                "component": "views/devtools/gen/index",
-                "icon": "CodeOutlined",
-                "locale": "route.devtools.gen"
-            }
-        ]
-    },
-    {
         "title": "日志管理",
         "path": "/logs",
         "component": "layout/index",
@@ -95,6 +72,29 @@ export default [
         ]
     },
     {
+        "title": "系统工具",
+        "path": "/devtools",
+        "component": "layout/index",
+        "icon": "GlobalOutlined",
+        "locale": "route.devtools",
+        "children": [
+            {
+                "title": "表单构建",
+                "path": "/devtools/form",
+                "component": "views/devtools/form/index",
+                "icon": "FileTextOutlined",
+                "locale": "route.devtools.form"
+            },
+            {
+                "title": "代码生成",
+                "path": "/devtools/gen",
+                "component": "views/devtools/gen/index",
+                "icon": "CodeOutlined",
+                "locale": "route.devtools.gen"
+            }
+        ]
+    },
+    {
         "title": "系统监控",
         "path": "/monitor",
         "component": "layout/index",
@@ -109,11 +109,18 @@ export default [
                 "locale": "route.monitor.online"
             },
             {
-                "title": "服务器监控",
+                "title": "服务监控",
                 "path": "/monitor/server",
                 "component": "views/monitor/server/index",
                 "icon": "FundOutlined",
                 "locale": "route.monitor.server"
+            },
+            {
+                "title": "缓存监控",
+                "path": "/monitor/cache",
+                "component": "views/monitor/cache/index",
+                "icon": "DatabaseOutlined",
+                "locale": "route.monitor.cache"
             },
             {
                 "title": "存储监控",
