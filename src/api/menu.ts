@@ -43,31 +43,31 @@ export default [
     },
     {
         "title": "日志管理",
-        "path": "/logs",
+        "path": "/log",
         "component": "layout/index",
         "icon": "SaveOutlined",
-        "locale": "route.logs",
+        "locale": "route.log",
         "children": [
             {
                 "title": "更新日志",
-                "path": "/logs/change",
-                "component": "views/logs/change/index",
+                "path": "/log/change",
+                "component": "views/log/change/index",
                 "icon": "FileSyncOutlined",
-                "locale": "route.logs.change"
+                "locale": "route.log.change"
             },
             {
                 "title": "登录日志",
-                "path": "/logs/login",
-                "component": "views/logs/login/index",
+                "path": "/log/login",
+                "component": "views/log/login/index",
                 "icon": "LoginOutlined",
-                "locale": "route.logs.login"
+                "locale": "route.log.login"
             },
             {
                 "title": "操作日志",
-                "path": "/logs/operate",
-                "component": "views/logs/operate/index",
+                "path": "/log/operate",
+                "component": "views/log/operate/index",
                 "icon": "FileAddOutlined",
-                "locale": "route.logs.operate"
+                "locale": "route.log.operate"
             }
         ]
     },

@@ -14,6 +14,36 @@ export default [
                 }
             },
             {
+                path: "/log",
+                redirect: "/log/change",
+                meta: {
+                    title: '日志管理'
+                },
+                children: [
+                    {
+                        path: "/log/change",
+                        component: () => import("@/views/log/change/index.vue"),
+                        meta: {
+                            title: '更新日志'
+                        }
+                    },
+                    {
+                        path: "/log/login",
+                        component: () => import("@/views/log/login/index.vue"),
+                        meta: {
+                            title: '登录日志'
+                        }
+                    },
+                    {
+                        path: "/log/operate",
+                        component: () => import("@/views/log/operate/index.vue"),
+                        meta: {
+                            title: '操作日志'
+                        }
+                    }
+                ]
+            },
+            {
                 path: "/system",
                 redirect: "/system/setting",
                 meta: {

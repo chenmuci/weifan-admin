@@ -1,14 +1,16 @@
 <template>
     <a-card>
         <a-form :model="queryForm" layout="inline">
-            <a-form-item label="更新类型" name="type">
-                <a-select v-model:value="queryForm.type" placeholder="更新类型" style="width: 200px;" allow-clear>
-                    <a-select-option value="1">重大更新</a-select-option>
-                    <a-select-option value="2">功能更新</a-select-option>
-                    <a-select-option value="3">Bug修复</a-select-option>
+            <a-form-item label="所属模块" name="title">
+                <a-input v-model:value="queryForm.title" placeholder="所属模块" allow-clear />
+            </a-form-item>
+            <a-form-item label="状态" name="status">
+                <a-select v-model:value="queryForm.status" placeholder="状态" style="width: 200px;" allow-clear>
+                    <a-select-option value="1">成功</a-select-option>
+                    <a-select-option value="2">失败</a-select-option>
                 </a-select>
             </a-form-item>
-            <a-form-item label="发布日期" name="createTime">
+            <a-form-item label="登录时间" name="createTime">
                 <a-range-picker v-model:value="queryForm.createTime" />
             </a-form-item>
             <a-form-item>
@@ -17,45 +19,40 @@
         </a-form>
         <div mt20px mb20px flex justify-between flex-row>
             <a-space>
-                <a-button type="primary" @click="handleOpenForm">新增</a-button>
-                <a-button danger :disabled="selectedRowKeyList.length === 0" @click="handleBatchDelete">批量删除</a-button>
+                <a-button danger :disabled="selectedRowKeyList.length === 0" @click="handleBatchDelete">删除</a-button>
+                <a-button danger @click="handleRemove">清空</a-button>
             </a-space>
             <TableOperation v-model="columns" :refresh="handleSelect" />
         </div>
         <a-table size="small" row-key="id" :data-source="tableData" :columns="columns" :loading="loading" :pagination="false"
                  :row-selection="{ selectedRowKeys: selectedRowKeyList, onChange: onSelectChange }">
             <template #bodyCell="{ text, column, record }">
-                <template v-if="column.key === 'version'">
-                    <a-button @click="handleOpenModal(record.content)" type="link">{{ text }}</a-button>
-                </template>
-                <template v-if="column.key === 'type'">
-                    <a-tag color="processing" v-if="record.type === '1'">
+                <template v-if="column.dataIndex === 'status'">
+                    <a-tag color="success" v-if="record.status === '1'">
                         <template #icon><my-icon name="CheckCircleOutlined" /></template>
-                        重大更新
+                        成功
                     </a-tag>
-                    <a-tag color="success" v-if="record.type === '2'">
-                        <template #icon><my-icon name="CheckCircleOutlined" /></template>
-                        功能更新
-                    </a-tag>
-                    <a-tag color="warning" v-if="record.type === '3'">
-                        <template #icon><my-icon name="CheckCircleOutlined" /></template>
-                        Bug修复
+                    <a-tag color="error" v-if="record.status === '0'">
+                        <template #icon><my-icon name="CloseCircleOutlined" /></template>
+                        失败
                     </a-tag>
                 </template>
-                <template v-if="column.key === 'operation'">
-                    <a-button type="link" @click="handleOpenForm(record)">编辑</a-button>
-                    <a-button type="link" danger @click="handleDelete(record.id)">删除</a-button>
+                <template v-if="column.dataIndex === 'costTime'">
+                    {{ text }} ms
+                </template>
+                <template v-if="column.dataIndex === 'operation'">
+                    <a-button type="link" @click="handlePreview(record)">详情</a-button>
                 </template>
             </template>
         </a-table>
         <div mt20px flex justify-end>
             <a-pagination show-size-changer :page-size-options="['10', '20', '30', '40', '50']"
-                    v-model:current="queryForm.pageNum"
-                    v-model:page-size="queryForm.pageSize"
-                    :total="total"
-                    @change="handleSelect"
-                    @showSizeChange="handleSelect"
-                    :show-total="() => `共${total}条`"
+                          v-model:current="queryForm.pageNum"
+                          v-model:page-size="queryForm.pageSize"
+                          :total="total"
+                          @change="handleSelect"
+                          @showSizeChange="handleSelect"
+                          :show-total="() => `共${total}条`"
             >
                 <template #buildOptionText="props">
                     <span v-if="props.value !== '50'">{{ props.value }}条/页</span>
@@ -64,63 +61,67 @@
             </a-pagination>
         </div>
     </a-card>
-    <ChangeLogForm ref="formRef" />
-    <ChangeLogModal ref="modalRef" />
+    <OperateLogModal ref="modalRef" />
 </template>
 
 <script setup lang="ts">
     import { Modal, message } from "ant-design-vue";
 
-    const ChangeLogForm = defineAsyncComponent(() => import('@/views/log/change/form.vue'))
-    const ChangeLogModal = defineAsyncComponent(() => import('@/views/log/change/modal.vue'))
+    const OperateLogModal = defineAsyncComponent(() => import('@/views/log/operate/modal.vue'))
 
-    const formRef = ref()
     const modalRef = ref()
     const loading = ref(false)
     const queryForm = reactive({
-        type: '',
+        title: '',
+        status: '',
         createTime: null,
         pageNum: 1,
         pageSize: 10
     })
     const columns = [
         {
-            key: 'version',
-            title: '版本',
-            dataIndex: 'version',
+            title: '所属模块',
+            dataIndex: 'title',
             ellipsis: true,
             align: 'center'
         },
         {
-            key: 'type',
-            title: '更新类型',
-            dataIndex: 'type',
+            title: '操作人员',
+            dataIndex: 'operator',
             ellipsis: true,
             align: 'center'
         },
         {
-            key: 'content',
-            title: '更新内容',
-            dataIndex: 'content',
+            title: '操作地点',
+            dataIndex: 'ipaddr',
             ellipsis: true,
             align: 'center'
         },
         {
-            key: 'createBy',
-            title: '发布人',
-            dataIndex: 'createBy',
+            title: '请求地址',
+            dataIndex: 'url',
             ellipsis: true,
             align: 'center'
         },
         {
-            key: 'createTime',
-            title: '发布时间',
+            title: '操作状态',
+            dataIndex: 'status',
+            ellipsis: true,
+            align: 'center'
+        },
+        {
+            title: '消耗时间',
+            dataIndex: 'costTime',
+            ellipsis: true,
+            align: 'center'
+        },
+        {
+            title: '登录日期',
             dataIndex: 'createTime',
             ellipsis: true,
             align: 'center'
         },
         {
-            key: 'operation',
             title: '操作',
             dataIndex: 'operation',
             align: 'center',
@@ -130,14 +131,13 @@
     const tableData = ref([
         {
             id: 1,
-            version: 'v1.0.0',
-            type: '1',
-            content: '微凡管理后台系统 v1.0.0 版本（2024-12-22）正式更新上线 \n' +
-                    '\n' +
-                    '1.【新增】人员管理\n' +
-                    '2.【新增】系统设置\n' +
-                    '3.【新增】缓存策略\n',
-            createBy: '超级管理员',
+            title: '代码生成',
+            operator: 'super_admin',
+            ipaddr: '127.0.0.1',
+            url: 'http://localhost:8080/gen',
+            params: '',
+            status: '1',
+            costTime: '20',
             createTime: '2024-12-22',
         }
     ])
@@ -160,25 +160,16 @@
         }
     }
 
-    const handleOpenForm = (data: any) => {
-        formRef.value.handleOpen(data)
-    }
-
-    const handleOpenModal = (data: any) => {
-        modalRef.value.handleOpen(data)
-    }
-
-    const handleDelete = async (id: any) => {
+    const handleRemove = async () => {
         Modal.confirm({
             title: '提示',
-            content: '确定要删除该数据吗?',
-            okText: '删除',
+            content: '确定要清空吗?',
+            okText: '清空',
             okType: 'danger',
             onOk() {
                 try {
                     loading.value = true
-                    console.log(id)
-                    message.success('删除成功')
+                    message.success('清空成功')
                     handleSelect()
                 } catch (err: any) {
                     message.error(err)
@@ -194,7 +185,7 @@
     const handleBatchDelete = async () => {
         Modal.confirm({
             title: '提示',
-            content: '确定要批量删除这些数据吗?',
+            content: '确定要删除这些数据吗?',
             okText: '删除',
             okType: 'danger',
             onOk() {
@@ -212,6 +203,10 @@
             cancelText: '取消',
             onCancel() {}
         })
+    }
+
+    const handlePreview = (data: any) => {
+        modalRef.value.handleOpen(data)
     }
 
     onMounted(() => {
