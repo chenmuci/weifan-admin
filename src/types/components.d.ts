@@ -11,6 +11,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectLang: typeof import('./../components/select-lang/index.vue')['default']
+    TableOperation: typeof import('./../components/table-operation/index.vue')['default']
     UserAvatar: typeof import('./../components/user-avatar/index.vue')['default']
   }
 }
